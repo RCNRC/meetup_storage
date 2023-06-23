@@ -31,9 +31,9 @@ def signal_handler(signum, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 
-def check_speaker(telegram_id):
+def check_speaker(username):
     try:
-        Speech.objects.get(speaker__telegram_id=telegram_id)
+        Speech.objects.get(speaker__username=username)
     except Speech.DoesNotExist:
         return False
     except Speech.MultipleObjectsReturned:
@@ -64,7 +64,7 @@ def send_welcome(message):
 def get_certain_speeches(message):
     keyboard, text = get_main_keyboard(message.chat.username)
     if check_speaker(message.chat.username):
-        speeches = Speech.objects.filter(speaker__telegram_id=message.chat.username)
+        speeches = Speech.objects.filter(speaker__username=message.chat.username)
         for speech in speeches:
             text = f'Выступление с {speech.start_time} до {speech.end_time}'
             markup = InlineKeyboardMarkup()
@@ -79,7 +79,7 @@ def callback_query(call):
     if 'speech' in call.data:
         speech_id = int(call.data.split('=')[1])
         try:
-            speaker = User.objects.get(telegram_id=call.message.chat.username)
+            speaker = User.objects.get(username=call.message.chat.username)
             speech = Speech.objects.get(id=speech_id)
             questions = Question.objects.filter(
                 to_who=speaker,
@@ -89,7 +89,7 @@ def callback_query(call):
                 time__lte=speech.end_time,
             )
             for question in questions:
-                text = f'Пользователь @{question.from_who.telegram_id}:'\
+                text = f'Пользователь @{question.from_who.username}:'\
                     f'\nВопрос: {question.text}'
                 bot.send_message(call.message.chat.id, text)
         except Speech.DoesNotExist:
@@ -101,7 +101,7 @@ def callback_query(call):
 def get_last_speech_questions(message):
     if check_speaker(message.chat.username):
         keyboard, _ = get_main_keyboard(message.chat.username)
-        speaker = User.objects.get(telegram_id=message.chat.username)
+        speaker = User.objects.get(username=message.chat.username)
         speech_aggregated_max_time = Speech.objects.filter(speaker=speaker).aggregate(Max('end_time'))
         speech = Speech.objects.get(end_time=speech_aggregated_max_time['end_time__max'])
         questions = Question.objects.filter(
@@ -112,7 +112,7 @@ def get_last_speech_questions(message):
             time__lte=speech.end_time,
         )
         for question in questions:
-            text = f'Пользователь @{question.from_who.telegram_id}:'\
+            text = f'Пользователь @{question.from_who.username}:'\
                    f'\nВопрос: {question.text}'
             bot.send_message(message.chat.id, text, reply_markup=keyboard)
     else:

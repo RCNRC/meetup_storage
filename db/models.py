@@ -3,7 +3,8 @@ from django.core.validators import MinValueValidator
 
 
 class User(models.Model):
-    telegram_id = models.CharField(max_length=32)
+    username = models.CharField(max_length=32)
+    chat_id = models.BigIntegerField()
     business_card = models.TextField()
     firstname = models.CharField(max_length=100)
     secondname = models.CharField(max_length=100)
