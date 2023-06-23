@@ -23,6 +23,7 @@ class Question(models.Model):
     text = models.TextField()
     communication_request = models.BooleanField(default=False)
     alert = models.BooleanField(default=False)
+    time = models.DateTimeField(auto_now_add=True)
 
 
 class Event(models.Model):
@@ -32,7 +33,8 @@ class Event(models.Model):
 
 
 class Speech(models.Model):
-    time = models.DateTimeField()
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
     event = models.ForeignKey(
         Event,
         related_name='speeches',
