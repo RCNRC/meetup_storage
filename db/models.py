@@ -23,8 +23,12 @@ class Question(models.Model):
     )
     text = models.TextField()
     communication_request = models.BooleanField(default=False)
-    alert = models.BooleanField(default=False)
     time = models.DateTimeField(auto_now_add=True)
+
+
+class Alert(models.Model):
+    text = models.TextField()
+    send = models.BooleanField(default=False)
 
 
 class Event(models.Model):
