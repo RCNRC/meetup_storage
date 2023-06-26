@@ -84,7 +84,6 @@ def callback_query(call):
             questions = Question.objects.filter(
                 to_who=speaker,
                 communication_request=False,
-                alert=False,
                 time__gte=speech.start_time,
                 time__lte=speech.end_time,
             )
@@ -107,7 +106,6 @@ def get_last_speech_questions(message):
         questions = Question.objects.filter(
             to_who=speaker,
             communication_request=False,
-            alert=False,
             time__gte=speech.start_time,
             time__lte=speech.end_time,
         )
