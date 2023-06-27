@@ -115,7 +115,7 @@ def main():
         try:
             event = get_event(update.callback_query.data.split('_')[1])
             subscribe_on_event(user, event)
-        except AttributeError:
+        except (AttributeError, IndexError):
             pass
 
         start_button = [
